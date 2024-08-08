@@ -46,3 +46,31 @@ func (fifo *FIFO[T]) Evict() (T, bool) {
 	fifo.len--
 	return v, true
 }
+
+func (fifo *FIFO[T]) Find(fn func(v T) bool) (*T, bool) {
+	for p := fifo.tail; p != nil; p = p.prev {
+		if fn(p.value) {
+			return &p.value, true
+		}
+	}
+	return nil, false
+}
+
+func (fifo *FIFO[T]) RemoveIf(fn func(v T) bool) bool {
+	var p, pp *entry[T]
+	for p, pp = fifo.tail, nil; p != nil; p, pp = p.prev, p {
+		if fn(p.value) {
+			if p.prev == nil {
+				fifo.head = pp
+			}
+			if pp == nil {
+				fifo.tail = p.prev
+			} else {
+				pp.prev = p.prev
+			}
+			fifo.len--
+			return true
+		}
+	}
+	return false
+}
