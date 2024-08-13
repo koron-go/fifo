@@ -44,7 +44,6 @@ func (cache *S3FIFO[K, V]) Len() int {
 	return cache.small.Len() + cache.main.Len()
 }
 
-
 func (cache *S3FIFO[K, V]) inSmallOrMain(k K) (*s3item[K, V], bool) {
 	equalKey := func(item s3item[K, V]) bool {
 		return item.key == k
@@ -92,7 +91,7 @@ func (cache *S3FIFO[K, V]) insertNew(item s3item[K, V]) {
 }
 
 func (cache *S3FIFO[K, V]) removeFromGhost(k K) bool {
-	return cache.ghost.RemoveIf(func(v K)bool {
+	return cache.ghost.RemoveIf(func(v K) bool {
 		return v == k
 	})
 }
