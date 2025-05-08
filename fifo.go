@@ -56,8 +56,11 @@ func (fifo *FIFO[T]) Find(fn func(v T) bool) (*T, bool) {
 	return nil, false
 }
 
+// RemoveIf removes all entries which its value matches with fn function.
+// Return true if removed some entries, otherwise false.
 func (fifo *FIFO[T]) RemoveIf(fn func(v T) bool) bool {
 	var p, pp *entry[T]
+	removed := false
 	for p, pp = fifo.tail, nil; p != nil; p, pp = p.prev, p {
 		if fn(p.value) {
 			if p.prev == nil {
@@ -69,8 +72,8 @@ func (fifo *FIFO[T]) RemoveIf(fn func(v T) bool) bool {
 				pp.prev = p.prev
 			}
 			fifo.len--
-			return true
+			removed = true
 		}
 	}
-	return false
+	return removed
 }
